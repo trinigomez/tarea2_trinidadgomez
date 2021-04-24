@@ -7,6 +7,7 @@ api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
+
 def getApp():
     return app
 
@@ -84,4 +85,4 @@ api.add_resource(Video, "/video/<int:video_id>")
 
 
 if __name__ == "__main__":
-    app.run(debug=True) # sacar para production
+    app.run() # sacar para production
