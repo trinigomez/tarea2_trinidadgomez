@@ -1,3 +1,3 @@
-from catalog import getApp
+from tarea2_trinidadgomez import getApp
 
 app=getApp()
