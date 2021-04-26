@@ -35,7 +35,7 @@ def serialize_artist(artist):
                 "name": artist.name,
                 "age": artist.age,
                 "albums": base + artist.id + "/albums", 
-                "tracks": base  + artist.id + "tracks",
+                "tracks": base  + artist.id + "/tracks",
                 "self": base + "artist/" + artist.id
     }
 
@@ -165,7 +165,7 @@ class artist_album(Resource):
     @marshal_with(album_fields)
     def post(self, artistId):
         args = album_post_args.parse_args()
-        to_encode = args['name'] = ":" + artistId
+        to_encode = args['name'] + ":" + artistId
         encoded_id = b64encode(to_encode.encode()).decode('utf-8')
         # ARREGLAR, dos artistas pueden tener un album con el mismo nombre
         result = AlbumModel.query.filter_by(id=encoded_id).first() 
