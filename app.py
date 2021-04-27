@@ -26,7 +26,7 @@ class TrackModel(db.Model):
     duration = db.Column(db.Integer, nullable=False)
     times_played = db.Column(db.Integer, nullable=False)
 
-db.create_all() # Solo una vez
+# db.create_all() # Solo una vez
 
 def serialize_artist(artist):
     base = "https://t2-tgomez.herokuapp.com/"
@@ -127,8 +127,8 @@ class Artist(Resource):
     def get(self, artist_id):
         print("obtener un artista")
         result = ArtistModel.query.filter_by(id=artist_id).first()
-        if not result:
-            abort(404, message="Could not find artist with that id...")
+        '''if not result:
+            abort(404, message="Could not find artist with that id...")'''
         
         return serialize_artist(result)
     
@@ -136,10 +136,9 @@ class Artist(Resource):
     def delete(self, artist_id):
         print("borrar un artista")
         result = ArtistModel.query.filter_by(id=artist_id).first()
-        if not result:
-            abort(404, message="artista inexistente")
+        '''if not result:
+            abort(404, message="artista inexistente")'''
         
-        ArtistModel.query.filter_by(id=artist_id).delete()
         db.session.delete(result)
         db.session.commit()
 
@@ -152,6 +151,30 @@ class all_albums(Resource):
         print("get all albums")
         result = AlbumModel.query.all()
         return [serialize_album(album) for album in result]
+
+class Album(Resource):
+
+    @marshal_with(album_fields)
+    def get(self, album_id):
+        print("obtener un album")
+        result = AlbumModel.query.filter_by(id=album_id).first()
+        '''if not result:
+            abort(404, message="album no encontado")'''
+        
+        return serialize_album(result), 200
+    
+    @marshal_with(album_fields)
+    def delete(self, album_id):
+        print("borrar un album")
+        result = AlbumModel.query.filter_by(id=album_id).first()
+        if not result:
+            abort(404, message="album inexistente")
+        
+        db.session.delete(result)
+        db.session.commit()
+
+        return 'album eliminado', 204
+
 
 class artist_album(Resource):
     
@@ -170,10 +193,13 @@ class artist_album(Resource):
         to_encode = args['name'] + ":" + artistId
         encoded_id = b64encode(to_encode.encode()).decode('utf-8')
         # ARREGLAR, dos artistas pueden tener un album con el mismo nombre
-        result = AlbumModel.query.filter_by(id=encoded_id).first() 
-        if result:
+        find_album = AlbumModel.query.filter_by(id=encoded_id).first() 
+        if find_album:
             abort(409, message="album ya existe") # Debe retornar el album
 
+        find_artist = ArtistModel.query.filter_by(id=artistId).first()
+        if not find_artist:
+            abort(422, message="artista no existe")
 
         album = AlbumModel(id=encoded_id, artist_id=artistId, name=args['name'], genre=args['genre'])
 
@@ -189,6 +215,29 @@ class all_tracks(Resource):
         result = TrackModel.query.all()
         return [serialize_track(track) for track in result]
 
+class Track(Resource):
+
+    @marshal_with(track_fields)
+    def get(self, track_id):
+        print("obtener un track")
+        result = TrackModel.query.filter_by(id=track_id).first()
+        '''if not result:
+            abort(404, message="album no encontado")'''
+        
+        return serialize_track(result), 200
+    
+    @marshal_with(track_fields)
+    def delete(self, track_id):
+        print("borrar un track")
+        result = TrackModel.query.filter_by(id=track_id).first()
+        '''if not result:
+            abort(404, message="album inexistente")'''
+        
+        db.session.delete(result)
+        db.session.commit()
+
+        return 'album eliminado', 204
+
 
 
 
@@ -196,8 +245,10 @@ class all_tracks(Resource):
 api.add_resource(Artists, "/artists")
 api.add_resource(Artist, "/artists/<string:artist_id>")
 api.add_resource(all_albums, "/albums")
+api.add_resource(Album, "/albums/<string:album_id>")
 api.add_resource(artist_album, "/artists/<string:artistId>/albums")
 api.add_resource(all_tracks, "/tracks")
+api.add_resource(Track, "/tracks/<string:track_id>")
 
 
 
