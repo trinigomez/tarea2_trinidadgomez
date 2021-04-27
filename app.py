@@ -125,23 +125,25 @@ class Artist(Resource):
 
     @marshal_with(artist_fields)
     def get(self, artist_id):
+        print("obtener un artista")
         result = ArtistModel.query.filter_by(id=artist_id).first()
         if not result:
             abort(404, message="Could not find artist with that id...")
         
         return serialize_artist(result)
     
-    '''@marshal_with(resource_fields)
+    @marshal_with(artist_fields)
     def delete(self, artist_id):
+        print("borrar un artista")
         result = ArtistModel.query.filter_by(id=artist_id).first()
         if not result:
             abort(404, message="Artist doesnt exist...")
         
         ArtistModel.query.filter_by(id=artist_id).delete()
-        #db.session.delete(result)
-        #db.session.commit()
+        db.session.delete(result)
+        db.session.commit()
 
-        return '', 204'''
+        return '', 204
 
 class all_albums(Resource):
 
