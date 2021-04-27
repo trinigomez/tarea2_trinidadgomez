@@ -277,7 +277,19 @@ class album_track(Resource):
         db.session.commit()
         return serialize_track(track), 201
 
+class play_track(Resource):
+    
+    @marshal_with(track_fields)
+    def put(self, track_id):
+        track = TrackModel.query.filter_by(id=track_id).first()
+        if not track:
+            abort(404, "cancion no encontrada")
 
+        track.times_played = track.times_played + 1
+
+        db.session.commit()
+
+        return  'cancion reproducida', 200
 
 api.add_resource(Artists, "/artists")
 api.add_resource(Artist, "/artists/<string:artist_id>")
@@ -287,6 +299,7 @@ api.add_resource(artist_album, "/artists/<string:artistId>/albums")
 api.add_resource(all_tracks, "/tracks")
 api.add_resource(Track, "/tracks/<string:track_id>")
 api.add_resource(album_track, "/albums/<string:albumId>/tracks")
+api.add_resource(play_track, "/tracks/<string:track_id>/play")
 
 
 

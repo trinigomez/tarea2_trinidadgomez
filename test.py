@@ -2,13 +2,24 @@ import requests
 
 BASE = "http://127.0.0.1:5000/"
 
-response = requests.post(BASE + "artists", {"name": "damian", "age": 26})
+'''response = requests.post(BASE + "artists", {"name": "damian", "age": 26})
 print(response.json())
 input()
 
 response = requests.get(BASE + "artists")
 print(response.json())
+input()'''
+
+response = requests.get(BASE + "/tracks/c2VndW5kbyB0cmFjazpkSE")
+print(response.json())
 input()
+
+response = requests.put(BASE + "tracks/c2VndW5kbyB0cmFjazpkSE/play")
+
+response = requests.get(BASE + "/tracks/c2VndW5kbyB0cmFjazpkSE")
+print(response.json())
+input()
+
 
 '''response = requests.post(BASE + "artists/dHJp/albums", {"name": "segundo album", "genre": "rock"})
 print(response.json())
