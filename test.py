@@ -2,12 +2,12 @@ import requests
 
 BASE = "http://127.0.0.1:5000/"
 
+'''
+response = requests.post(BASE + "artists", {"name": "Polima WestCoast", "age":21})
+print(response.json())'''
 
-response = requests.post(BASE + "artists", {"name": "Adele", "age":30})
+response = requests.get(BASE + "artists/UG9saW1hIFdlc3RDb2FzdA==")
 print(response.json())
-input()
-response = requests.delete(BASE + "artists/QWRlbGU=")
-
 input()
 
 '''

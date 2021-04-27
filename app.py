@@ -26,7 +26,7 @@ class TrackModel(db.Model):
     duration = db.Column(db.Integer, nullable=False)
     times_played = db.Column(db.Integer, nullable=False)
 
-# db.create_all() # Solo una vez
+db.create_all() # Solo una vez
 
 def serialize_artist(artist):
     base = "https://t2-tgomez.herokuapp.com/"
@@ -34,9 +34,9 @@ def serialize_artist(artist):
                 "id": artist.id,
                 "name": artist.name,
                 "age": artist.age,
-                "albums": base + "artist/" + artist.id + "/albums", 
-                "tracks": base  + "artist/" + artist.id + "/tracks",
-                "self": base + "artist/" + artist.id
+                "albums": base + "artists/" + artist.id + "/albums", 
+                "tracks": base  + "artists/" + artist.id + "/tracks",
+                "self": base + "artists/" + artist.id
     }
 
 def serialize_album(album):
@@ -137,7 +137,7 @@ class Artist(Resource):
         print("borrar un artista")
         result = ArtistModel.query.filter_by(id=artist_id).first()
         if not result:
-            abort(404, message="Artist doesnt exist...")
+            abort(404, message="artista inexistente")
         
         ArtistModel.query.filter_by(id=artist_id).delete()
         db.session.delete(result)
@@ -202,4 +202,4 @@ api.add_resource(all_tracks, "/tracks")
 
 
 if __name__ == "__main__":
-    app.run() # sacar para production
+    app.run(debug=True) # sacar para production
