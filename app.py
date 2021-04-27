@@ -22,8 +22,9 @@ class AlbumModel(db.Model):
 class TrackModel(db.Model):
     id = db.Column(db.String, primary_key=True)
     album_id = db.Column(db.String, nullable=False)
+    artist_id = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
+    duration = db.Column(db.Float, nullable=False)
     times_played = db.Column(db.Integer, nullable=False)
 
 # db.create_all() # Solo una vez
@@ -58,7 +59,7 @@ def serialize_track(track):
                 "name": track.name,
                 "duration": track.duration,
                 "times_played": track.times_played,
-                "artist": "Falta solucionar",
+                "artist": base + "artists/" + "Falta solucionar",
                 "album": base + "albums/" + track.album_id,
                 "self": base + "tracks/" + track.id
     }
@@ -70,6 +71,10 @@ artist_post_args.add_argument("age", type=str, required=True)
 album_post_args = reqparse.RequestParser()
 album_post_args.add_argument("name", type=str, required=True)
 album_post_args.add_argument("genre", type=str, required=True)
+
+track_post_args = reqparse.RequestParser()
+track_post_args.add_argument("name", type=str, required=True)
+track_post_args.add_argument("duration", type=int, required=True)
 
 artist_fields = {
     'id': fields.String,
@@ -111,7 +116,10 @@ class Artists(Resource):
     @marshal_with(artist_fields)
     def post(self):
         args = artist_post_args.parse_args()
-        encoded = b64encode(args['name'].encode()).decode('utf-8')
+        encoded_id = b64encode(args['name'].encode()).decode('utf-8')
+        if len(encoded_id) > 22:
+            encoded_id = encoded_id[0:22]
+
         result = ArtistModel.query.filter_by(id=encoded).first()
         if result:
             abort(409, message="Artista ya existe")
@@ -127,17 +135,18 @@ class Artist(Resource):
     def get(self, artist_id):
         print("obtener un artista")
         result = ArtistModel.query.filter_by(id=artist_id).first()
-        '''if not result:
-            abort(404, message="Could not find artist with that id...")'''
+        if not result:
+            abort(404, message="Could not find artist with that id...")
         
         return serialize_artist(result)
     
+    # FALTA ELIMINAR LOS ALBUMS Y CANCIONES
     @marshal_with(artist_fields)
     def delete(self, artist_id):
         print("borrar un artista")
         result = ArtistModel.query.filter_by(id=artist_id).first()
-        '''if not result:
-            abort(404, message="artista inexistente")'''
+        if not result:
+            abort(404, message="artista inexistente")
         
         db.session.delete(result)
         db.session.commit()
@@ -158,11 +167,12 @@ class Album(Resource):
     def get(self, album_id):
         print("obtener un album")
         result = AlbumModel.query.filter_by(id=album_id).first()
-        '''if not result:
-            abort(404, message="album no encontado")'''
+        if not result:
+            abort(404, message="album no encontado")
         
         return serialize_album(result), 200
     
+    # FALTA ELIMINAR TODAS LAS CANCIONES
     @marshal_with(album_fields)
     def delete(self, album_id):
         print("borrar un album")
@@ -174,7 +184,6 @@ class Album(Resource):
         db.session.commit()
 
         return 'album eliminado', 204
-
 
 class artist_album(Resource):
     
@@ -192,6 +201,8 @@ class artist_album(Resource):
         args = album_post_args.parse_args()
         to_encode = args['name'] + ":" + artistId
         encoded_id = b64encode(to_encode.encode()).decode('utf-8')
+        if len(encoded_id) > 22:
+            encoded_id = encoded_id[0:22]
         # ARREGLAR, dos artistas pueden tener un album con el mismo nombre
         find_album = AlbumModel.query.filter_by(id=encoded_id).first() 
         if find_album:
@@ -221,8 +232,8 @@ class Track(Resource):
     def get(self, track_id):
         print("obtener un track")
         result = TrackModel.query.filter_by(id=track_id).first()
-        '''if not result:
-            abort(404, message="album no encontado")'''
+        if not result:
+            abort(404, message="album no encontado")
         
         return serialize_track(result), 200
     
@@ -230,15 +241,41 @@ class Track(Resource):
     def delete(self, track_id):
         print("borrar un track")
         result = TrackModel.query.filter_by(id=track_id).first()
-        '''if not result:
-            abort(404, message="album inexistente")'''
+        if not result:
+            abort(404, message="album inexistente")
         
         db.session.delete(result)
         db.session.commit()
 
         return 'album eliminado', 204
 
+class album_track(Resource):
 
+    @marshal_with(track_fields)
+    def get(self, albumId):
+        print("get tracks from album")
+        result = TrackModel.query.filter_by(album_id=albumId).all()
+        if not result:
+            abort(404, message="Album inexistente")
+
+        return [serialize_track(track) for track in result]
+    
+    @marshal_with(track_fields)
+    def post(self, albumId):
+        args = track_post_args.parse_args()
+        to_encode = args['name'] + ":" + albumId
+        encoded_id = b64encode(to_encode.encode()).decode('utf-8')
+        if len(encoded_id) > 22:
+            encoded_id = encoded_id[0:22]
+        find_album = AlbumModel.query.filter_by(id=albumId).first()
+        if not find_album:
+            abort(422, message="album no existe")
+        #FAlta el manejo de errores
+
+        track = TrackModel(id=encoded_id, album_id=albumId, artist_id= find_album.artist_id ,name=args['name'], duration=args['duration'], times_played=0)
+        db.session.add(track)
+        db.session.commit()
+        return serialize_track(track), 201
 
 
 
@@ -249,6 +286,7 @@ api.add_resource(Album, "/albums/<string:album_id>")
 api.add_resource(artist_album, "/artists/<string:artistId>/albums")
 api.add_resource(all_tracks, "/tracks")
 api.add_resource(Track, "/tracks/<string:track_id>")
+api.add_resource(album_track, "/albums/<string:albumId>/tracks")
 
 
 

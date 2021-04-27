@@ -2,10 +2,27 @@ import requests
 
 BASE = "http://127.0.0.1:5000/"
 
-'''response = requests.post(BASE + "artists/VHJpbmlkYWQ=/albums", {"name": "tri album", "genre":"pop"})
+'''response = requests.post(BASE + "artists", {"name": "tri", "age": 24})
+print(response.json())
+input()
+
+response = requests.get(BASE + "artists")
 print(response.json())
 input()'''
-response = requests.get(BASE + "albums/dHJpIGFsYnVtOlZISnBibWxrWVdRPQ==")
+
+'''response = requests.post(BASE + "artists/dHJp/albums", {"name": "segundo album", "genre": "rock"})
+print(response.json())
+input()
+
+response = requests.get(BASE + "artists/dHJp/albums")
+print(response.json())
+input()'''
+
+response = requests.post(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks", {"name": "segundo track", "duration": 2})
+print(response.json())
+input()
+
+response = requests.get(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks")
 print(response.json())
 input()
 
