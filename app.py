@@ -34,8 +34,8 @@ def serialize_artist(artist):
                 "id": artist.id,
                 "name": artist.name,
                 "age": artist.age,
-                "albums": base + artist.id + "/albums", 
-                "tracks": base  + artist.id + "/tracks",
+                "albums": base + "artist/" + artist.id + "/albums", 
+                "tracks": base  + "artist/" + artist.id + "/tracks",
                 "self": base + "artist/" + artist.id
     }
 
@@ -114,7 +114,7 @@ class Artists(Resource):
         encoded = b64encode(args['name'].encode()).decode('utf-8')
         result = ArtistModel.query.filter_by(id=encoded).first()
         if result:
-            abort(409, message="Artist already exists...")
+            abort(409, message="Artista ya existe")
 
         artist = ArtistModel(id=encoded, name=args['name'], age=args['age'])
         db.session.add(artist)
@@ -200,4 +200,4 @@ api.add_resource(all_tracks, "/tracks")
 
 
 if __name__ == "__main__":
-    app.run(debug=True) # sacar para production
+    app.run() # sacar para production
