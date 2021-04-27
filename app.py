@@ -120,11 +120,11 @@ class Artists(Resource):
         if len(encoded_id) > 22:
             encoded_id = encoded_id[0:22]
 
-        result = ArtistModel.query.filter_by(id=encoded).first()
+        result = ArtistModel.query.filter_by(id=encoded_id).first()
         if result:
             abort(409, message="Artista ya existe")
 
-        artist = ArtistModel(id=encoded, name=args['name'], age=args['age'])
+        artist = ArtistModel(id=encoded_id, name=args['name'], age=args['age'])
         db.session.add(artist)
         db.session.commit()
         return serialize_artist(artist), 201
@@ -291,4 +291,4 @@ api.add_resource(album_track, "/albums/<string:albumId>/tracks")
 
 
 if __name__ == "__main__":
-    app.run(debug=True) # sacar para production
+    app.run() # sacar para production
