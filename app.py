@@ -27,7 +27,7 @@ class TrackModel(db.Model):
     duration = db.Column(db.Float, nullable=False)
     times_played = db.Column(db.Integer, nullable=False)
 
-db.create_all() # Solo una vez
+# db.create_all() # Solo una vez
 
 def serialize_artist(artist):
     base = "https://t2-tgomez.herokuapp.com/"
@@ -148,6 +148,16 @@ class Artist(Resource):
         if not result:
             abort(404, message="artista inexistente")
         
+        albums = AlbumModel.query.filter_by(artist_id=artist_id).all()
+
+        for album in albums:
+            db.session.delete(album)
+
+        tracks = TrackModel.query.filter_by(artist_id=artist_id).all()
+
+        for track in tracks:
+            db.session.delete(track)
+
         db.session.delete(result)
         db.session.commit()
 
@@ -175,11 +185,16 @@ class Album(Resource):
     # FALTA ELIMINAR TODAS LAS CANCIONES
     @marshal_with(album_fields)
     def delete(self, album_id):
-        print("borrar un album")
+        print("borrar un album y todas sus canciones")
         result = AlbumModel.query.filter_by(id=album_id).first()
         if not result:
             abort(404, message="album inexistente")
         
+        tracks = TrackModel.query.filter_by(album_id=album_id).all()
+
+        for track in tracks:
+            db.session.delete(track)
+
         db.session.delete(result)
         db.session.commit()
 
