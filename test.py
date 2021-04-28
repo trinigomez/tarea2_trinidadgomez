@@ -10,13 +10,13 @@ response = requests.get(BASE + "artists")
 print(response.json())
 input()'''
 
-response = requests.get(BASE + "/tracks/c2VndW5kbyB0cmFjazpkSE")
+response = requests.get(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks")
 print(response.json())
 input()
 
-response = requests.put(BASE + "tracks/c2VndW5kbyB0cmFjazpkSE/play")
+response = requests.put(BASE + "albums/dHJpIGFsYnVtOmRISnA=/play")
 
-response = requests.get(BASE + "/tracks/c2VndW5kbyB0cmFjazpkSE")
+response = requests.get(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks")
 print(response.json())
 input()
 
