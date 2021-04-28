@@ -334,8 +334,8 @@ api.add_resource(album_track, "/albums/<string:albumId>/tracks")
 
 # Play
 api.add_resource(play_track, "/tracks/<string:track_id>/play")
-api.add_resource(play_album, "/albums/<string:albumId>/play")
+api.add_resource(play_album, "/albums/<string:albumId>/tracks/play")
 
 
 if __name__ == "__main__":
-    app.run(debug=True) # sacar para production
+    app.run() # sacar para production
