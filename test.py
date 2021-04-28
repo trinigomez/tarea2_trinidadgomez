@@ -2,6 +2,7 @@ import requests
 
 BASE = "http://127.0.0.1:5000/"
 
+# Crear artistas
 '''response = requests.post(BASE + "artists", {"name": "damian", "age": 26})
 print(response.json())
 input()
@@ -10,7 +11,7 @@ response = requests.get(BASE + "artists")
 print(response.json())
 input()'''
 
-response = requests.get(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks")
+'''response = requests.get(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks")
 print(response.json())
 input()
 
@@ -18,29 +19,27 @@ response = requests.put(BASE + "albums/dHJpIGFsYnVtOmRISnA=/play")
 
 response = requests.get(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks")
 print(response.json())
-input()
+input()'''
 
-
-'''response = requests.post(BASE + "artists/dHJp/albums", {"name": "segundo album", "genre": "rock"})
+# Crear Albums
+'''response = requests.post(BASE + "artists/ZGFtaWFu/albums", {"name": "album dami", "genre": "rock"})
 print(response.json())
 input()
 
-response = requests.get(BASE + "artists/dHJp/albums")
+response = requests.get(BASE + "artists/ZGFtaWFu/albums")
 print(response.json())
 input()'''
 
-'''response = requests.post(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks", {"name": "segundo track", "duration": 2})
+# Crear Tracks
+'''response = requests.post(BASE + "albums/YWxidW0gZGFtaTpaR0Z0YV/tracks", {"name": "segundi track", "duration": 3})
 print(response.json())
 input()
 
-response = requests.get(BASE + "albums/dHJpIGFsYnVtOmRISnA=/tracks")
+response = requests.get(BASE + "albums/YWxidW0gZGFtaTpaR0Z0YV/tracks")
 print(response.json())
 input()'''
 
-'''
-response = requests.post(BASE + "artists/ZGFtaWFu/albums", {"name": "primer album", "genre": "pop"})
-print(response.json())'''
+# Get tracks from artist
 
-
-'''response = requests.patch(BASE + "video/2", {"views":99, "likes":101})
-print(response.json())'''
+response = requests.get(BASE + "artists/ZGFtaWFu/tracks")
+print(response.json())

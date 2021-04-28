@@ -218,6 +218,19 @@ class artist_album(Resource):
         db.session.commit()
         return serialize_album(album), 201
 
+class artist_tracks(Resource):
+
+    @marshal_with(track_fields)
+    def get(self, artistId):
+        print("get tracks from artist")
+        artist = ArtistModel.query.filter_by(id=artistId).first()
+        if not artist:
+            abort(404, message="artista no encontrado")
+
+        tracks = TrackModel.query.filter_by(artist_id=artistId).all()
+
+        return [serialize_track(track) for track in tracks]
+
 class all_tracks(Resource):
 
     @marshal_with(track_fields)
@@ -314,6 +327,7 @@ api.add_resource(Artist, "/artists/<string:artist_id>")
 api.add_resource(all_albums, "/albums")
 api.add_resource(Album, "/albums/<string:album_id>")
 api.add_resource(artist_album, "/artists/<string:artistId>/albums")
+api.add_resource(artist_tracks, "/artists/<string:artistId>/tracks")
 api.add_resource(all_tracks, "/tracks")
 api.add_resource(Track, "/tracks/<string:track_id>")
 api.add_resource(album_track, "/albums/<string:albumId>/tracks")
@@ -324,4 +338,4 @@ api.add_resource(play_album, "/albums/<string:albumId>/play")
 
 
 if __name__ == "__main__":
-    app.run() # sacar para production
+    app.run(debug=True) # sacar para production
