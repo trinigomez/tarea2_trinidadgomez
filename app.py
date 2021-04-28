@@ -27,7 +27,7 @@ class TrackModel(db.Model):
     duration = db.Column(db.Float, nullable=False)
     times_played = db.Column(db.Integer, nullable=False)
 
-# db.create_all() # Solo una vez
+db.create_all() # Solo una vez
 
 def serialize_artist(artist):
     base = "https://t2-tgomez.herokuapp.com/"
