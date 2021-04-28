@@ -292,7 +292,6 @@ class album_track(Resource):
 
 class play_track(Resource):
     
-    @marshal_with(track_fields)
     def put(self, track_id):
         track = TrackModel.query.filter_by(id=track_id).first()
         if not track:
@@ -306,7 +305,6 @@ class play_track(Resource):
 
 class play_album(Resource):
 
-    @marshal_with(album_fields)
     def put(self, albumId):
         album = AlbumModel.query.filter_by(id=albumId).first()
         
@@ -322,6 +320,22 @@ class play_album(Resource):
 
         return 'canciones del album reproducidas', 200
 
+class play_artist(Resource):
+
+    def put(self, artistId):
+        artist = ArtistModel.query.filter_by(id=artistId).first()
+        if not artist:
+            abort(404, message="artista no encontrado")
+        
+        tracks = TrackModel.query.filter_by(artist_id=artistId).all()
+
+        for track in tracks:
+            track.times_played = track.times_played + 1
+
+        db.session.commit()
+
+        return 'Todas las canciones del artista fueron reproducidas', 200
+
 api.add_resource(Artists, "/artists")
 api.add_resource(Artist, "/artists/<string:artist_id>")
 api.add_resource(all_albums, "/albums")
@@ -335,6 +349,8 @@ api.add_resource(album_track, "/albums/<string:albumId>/tracks")
 # Play
 api.add_resource(play_track, "/tracks/<string:track_id>/play")
 api.add_resource(play_album, "/albums/<string:albumId>/tracks/play")
+api.add_resource(play_artist, "/artists/<string:artistId>/albums/play")
+
 
 
 if __name__ == "__main__":
