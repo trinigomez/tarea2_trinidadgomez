@@ -119,15 +119,17 @@ class Artists(Resource):
         encoded_id = b64encode(args['name'].encode()).decode('utf-8')
         if len(encoded_id) > 22:
             encoded_id = encoded_id[0:22]
-
+        
         result = ArtistModel.query.filter_by(id=encoded_id).first()
         if result:
-            abort(409, message="Artista ya existe")
-
+            abort(409, message="artista ya existe")
+        
         artist = ArtistModel(id=encoded_id, name=args['name'], age=args['age'])
         db.session.add(artist)
         db.session.commit()
+
         return serialize_artist(artist), 201
+
 
 class Artist(Resource):
 

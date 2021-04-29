@@ -2,8 +2,8 @@ import requests
 
 BASE = "http://127.0.0.1:5000/"
 
-'''# Crear artistas
-response = requests.post(BASE + "artists", {"name": "damian", "age": 26})
+# Crear artistas
+response = requests.post(BASE + "artists", {"name": "new artist", "age": 30})
 print(response.json())
 input()
 
@@ -12,7 +12,7 @@ print(response.json())
 input()
 
 # Crear Albums
-response = requests.post(BASE + "artists/ZGFtaWFu/albums", {"name": "album dami", "genre": "rock"})
+'''response = requests.post(BASE + "artists/ZGFtaWFu/albums", {"name": "album dami", "genre": "rock"})
 print(response.json())
 input()
 
@@ -42,5 +42,5 @@ print(response.json())'''
 #response = requests.delete(BASE + "albums/YWxidW0gZGFtaTpaR0Z0YV")
 
 # Delete Artist
-response = requests.delete(BASE + "artists/ZGFtaWFu")
+# response = requests.delete(BASE + "artists/ZGFtaWFu")
 
