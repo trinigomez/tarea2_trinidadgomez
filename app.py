@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from flask_sqlalchemy import SQLAlchemy
 from base64 import b64encode
@@ -116,20 +116,20 @@ class Artists(Resource):
     @marshal_with(artist_fields)
     def post(self):
         args = artist_post_args.parse_args()
+        print(args)
         encoded_id = b64encode(args['name'].encode()).decode('utf-8')
         if len(encoded_id) > 22:
             encoded_id = encoded_id[0:22]
         
         result = ArtistModel.query.filter_by(id=encoded_id).first()
         if result:
-            abort(409, message="artista ya existe")
+            return serialize_artist(result), 409
         
         artist = ArtistModel(id=encoded_id, name=args['name'], age=args['age'])
         db.session.add(artist)
         db.session.commit()
 
         return serialize_artist(artist), 201
-
 
 class Artist(Resource):
 
@@ -223,7 +223,7 @@ class artist_album(Resource):
         # ARREGLAR, dos artistas pueden tener un album con el mismo nombre
         find_album = AlbumModel.query.filter_by(id=encoded_id).first() 
         if find_album:
-            abort(409, message="album ya existe") # Debe retornar el album
+            return serialize_album(find_album), 409
 
         find_artist = ArtistModel.query.filter_by(id=artistId).first()
         if not find_artist:
