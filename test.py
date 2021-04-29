@@ -3,13 +3,13 @@ import requests
 BASE = "http://127.0.0.1:5000/"
 
 # Crear artistas
-response = requests.post(BASE + "artists", {"name": "new artist", "age": 30})
+'''response = requests.post(BASE + "artists", {"name": "second artist", "age": 30})
 print(response.json())
 input()
 
 response = requests.get(BASE + "artists")
 print(response.json())
-input()
+input()'''
 
 # Crear Albums
 '''response = requests.post(BASE + "artists/ZGFtaWFu/albums", {"name": "album dami", "genre": "rock"})

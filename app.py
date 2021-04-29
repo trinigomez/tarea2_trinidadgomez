@@ -293,14 +293,19 @@ class album_track(Resource):
     @marshal_with(track_fields)
     def post(self, albumId):
         args = track_post_args.parse_args()
+        find_album = AlbumModel.query.filter_by(id=albumId).first()
+        
+        if not find_album:
+            abort(422, message="album no existe")
+
         to_encode = args['name'] + ":" + albumId
         encoded_id = b64encode(to_encode.encode()).decode('utf-8')
         if len(encoded_id) > 22:
             encoded_id = encoded_id[0:22]
-        find_album = AlbumModel.query.filter_by(id=albumId).first()
-        if not find_album:
-            abort(422, message="album no existe")
-        #FAlta el manejo de errores
+        
+        find_track = TrackModel.query.filter_by(id=encoded_id).first()
+        if find_track:
+            return serialize_track(find_track), 409
 
         track = TrackModel(id=encoded_id, album_id=albumId, artist_id= find_album.artist_id ,name=args['name'], duration=args['duration'], times_played=0)
         db.session.add(track)
